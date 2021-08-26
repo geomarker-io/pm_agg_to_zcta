@@ -76,7 +76,7 @@ zcta_2dig_pm <- function(d) {
   d_pm <- bind_rows(d_pm) %>%
     arrange(zcta, date)
 
-  out_file_name <- glue::glue("zcta_2000/pm_{dig2}XXX.rds")
+  out_file_name <- glue::glue("zcta_2010/pm_{dig2}XXX.rds")
   saveRDS(d_pm, out_file_name)
   on.exit(fs::file_delete(out_file_name))
 
@@ -85,7 +85,7 @@ zcta_2dig_pm <- function(d) {
 }
 
 # create csv file to keep skipped ZCTAs
-fs::dir_create("zcta_2000")
+fs::dir_create("zcta_2010")
 blank <- data.frame("skipped" = "")
 write_csv(x = blank, "skipped_zctas.csv")
 
