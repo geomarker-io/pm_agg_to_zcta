@@ -50,6 +50,14 @@ get_chunk_yr <- function(d, yr) {
 zcta_2dig_pm <- function(d) {
   dig2 <- substr(d$zcta[1], 1, 2)
   print(dig2)
+  out_file_name <- glue::glue("zcta_2010/pm_{dig2}XXX.rds")
+
+  safe_check <- purrr::possibly(s3:::s3_check_for_file_s3, otherwise = FALSE)
+  file_exists_on_s3 <- safe_check(glue::glue("s3://pm25-brokamp/{out_file_name}"))
+  if (file_exists_on_s3) {
+    message(glue::glue("{out_file_name} already exists"))
+    return(invisible(NULL))
+  }
 
   d <- d %>%
     left_join(zcta_to_h3, by = "zcta") %>%
@@ -79,7 +87,6 @@ zcta_2dig_pm <- function(d) {
   d_pm <- bind_rows(d_pm) %>%
     arrange(zcta, date)
 
-  out_file_name <- glue::glue("zcta_2010/pm_{dig2}XXX.rds")
   saveRDS(d_pm, out_file_name)
   on.exit(fs::file_delete(out_file_name))
 
