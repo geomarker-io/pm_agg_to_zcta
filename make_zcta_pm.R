@@ -9,8 +9,11 @@ zcta_to_h3 <- s3::s3_get("s3://geomarker/h3/zcta_to_h3/zcta_2010_to_h3.rds") %>%
 options(tigris_use_cache = TRUE)
 d_all <- tigris::zctas() %>%
   sf::st_drop_geometry() %>%
-  select(zcta = ZCTA5CE10) %>%
-  filter(zcta %in% zcta_to_h3$zcta)
+  select(zcta = ZCTA5CE10)
+
+# cluster keeps blocking proxy for tigris???
+# d_all <- readRDS("tigris_temp.rds")
+d_all <- filter(d_all, zcta %in% zcta_to_h3$zcta)
 
 # reads in individual chunk files and joins to data for h3-year
 read_chunk_join_h3 <- function(fl, d) {
