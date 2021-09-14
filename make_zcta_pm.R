@@ -72,10 +72,7 @@ zcta_2dig_pm <- function(d) {
 
   # exclude ZCTAs that require unavailable chunks
   exclude_zctas <- d %>%
-    filter(
-      !h3_3 %in% safe_harbor_h3_avail,
-      !duplicated(zcta)
-    ) %>%
+    filter(!h3_3 %in% safe_harbor_h3_avail) %>%
     .$zcta
 
   write_csv(data.frame(exclude_zctas), "skipped_zctas.csv", append = T)
@@ -101,4 +98,4 @@ write_csv(x = blank, "skipped_zctas.csv")
 
 # loop over all two-digit zctas
 d_all_split <- split(d_all, f = substr(d_all$zcta, 1, 2), drop = TRUE)
-walk(d_all_split, zcta_2dig_pm)
+walk(d_all_split, possibly(zcta_2dig_pm, otherwise = NA))
